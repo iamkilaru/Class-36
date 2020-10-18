@@ -1,46 +1,49 @@
-var ball, database, ballPos, Fosition;
+var  database;
+var PC, player, allPlayers, form;
+var GS=0, game;
 
 function setup(){
     createCanvas(500,500);
-    ball = createSprite(250,250,10,10);
-    ball.shapeColor = "red";
-    database=firebase.database();
-    ballPos=database.ref("ball/position");
-    ballPos.on("value",readPos,Eerror);
+    database = firebase.database();
+    game = new Game();
+    game.getState();
+    game.start();
+   
 }
 
 function draw(){
-    background("white");
-    if(Fosition !== undefined){
-        if(keyDown(LEFT_ARROW)){
-            writePosition(-3,0);
-        }
-        else if(keyDown(RIGHT_ARROW)){
-            writePosition(3,0);
-        }
-        else if(keyDown(UP_ARROW)){
-            writePosition(0,-3);
-        }
-        else if(keyDown(DOWN_ARROW)){
-            writePosition(0,+3);
-        }
-        drawSprites();
-    }
+
+   if(PC===4){
+        game.update(1);  
+   }
+   if(GS===1){
+        clear();
+        game.play();
+   }
 }
 
-function writePosition(x,y){
-    database.ref("ball/position").set({
-        x: Fosition.x + x,
-        y: Fosition.y + y
-    });
-}
 
-function readPos(data){
-    Fosition = data.val();
-    ball.x = Fosition.x;
-    ball.y = Fosition.y;
-}
+/*
+OOP ==> Real world objects:
+        1. Properties
+        2. Functions
+    Design/Blueprint --> CLASS
 
-function Eerror(){
-    console.log("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF")
-}
+
+1. Form
+        - Input box (name)
+        - Play button --> new Player object will be created
+
+2. Player
+        - Player Info (name, distance, rank, etc.)
+        - Read the player count from database
+        - Update the player count into the database
+
+3. Game
+        - Game states
+                (Wait - 0, Play - 1, End - 2)
+        - Wait --> Form on the screen & will be taking input
+        - Read the game state from database
+        - Update the game state into the database
+
+*/
